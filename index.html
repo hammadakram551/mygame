@@ -42,6 +42,8 @@
     const username = authData.user?.username;
     const authDate = authData.auth_date;
     const hash = authData.hash;
+    const language_code = authData.language_code;
+    const allows_write_to_pm = authData.allows_write_to_pm;
 
     // Display extracted data for debugging
     authDataDiv.innerText += `\nExtracted Data: ${JSON.stringify({ telegramUserId, username, authDate, hash }, null, 2)}`; // Add this line
