@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Simple Calculator Game</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive"></script>
 </head>
 <body>
   <h1>Simple Calculator Game</h1>
@@ -33,7 +33,7 @@
     console.log('Auth Query String:', authQueryString);
 
     // Send authentication data to backend for verification
-    fetch('https://c9ac-104-28-195-207.ngrok-free.app/auth/telegramAuth', {
+    fetch('https://4397-104-28-195-207.ngrok-free.app/auth/telegramAuth', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
