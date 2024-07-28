@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -20,7 +20,6 @@
   <h2>Result: <span id="result"></span></h2>
 
   <script>
-    console.log('Script loaded');
     Telegram.WebApp.ready();
     console.log('Telegram WebApp is ready');
 
@@ -37,19 +36,16 @@
     // Send authentication data to backend for verification
     fetch('https://78d7-182-189-96-197.ngrok-free.app/auth/telegramAuth', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        telegramUserId: authData.user.id,
-        username: authData.user.username,
-        authDate: authData.auth_date,
-        hash: authData.hash
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        telegramUserId: authData.id, 
+        username: authData.username, 
+        authDate: authData.auth_date, 
+        hash: authData.hash 
       })
     })
     .then(response => response.json())
     .then(result => {
-      console.log('Fetch result:', result);
       if (result.success) {
         authStatus.style.display = 'none';
         gameDiv.style.display = 'block';
@@ -91,6 +87,7 @@
   </script>
 </body>
 </html>
+
 
 
 
