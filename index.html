@@ -60,6 +60,8 @@ fetch('https://78d7-182-189-96-197.ngrok-free.app/auth/telegramAuth', {
       username: authData.user.username,
       photo_url: authData.user.photo_url,
       auth_date: authData.auth_date,
+      language_code: authData.language_code,
+      allows_write_to_pm : authData.allows_write_to_pm,
       hash: authData.hash
     }
   })
