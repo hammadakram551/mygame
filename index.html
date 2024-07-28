@@ -38,8 +38,8 @@
     console.log('Auth Query String:', authQueryString);
 
     // Extract necessary data
-    const telegramUserId = authData.id;
-    const username = authData.username;
+    const telegramUserId = authData.user?.id;
+    const username = authData.user?.username;
     const authDate = authData.auth_date;
     const hash = authData.hash;
 
