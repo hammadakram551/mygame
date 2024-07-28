@@ -4,10 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Simple Calculator Game</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
   <h1>Simple Calculator Game</h1>
-  <div>
+  <div id="auth-status">Authenticating...</div>
+  <div id="user-info" style="display: none;">
+    <p>Telegram User ID: <span id="telegram-id"></span></p>
+    <p>Username: <span id="username"></span></p>
+  </div>
+  <div id="game" style="display: none;">
     <input type="number" id="num1" placeholder="Enter first number">
     <input type="number" id="num2" placeholder="Enter second number">
     <button onclick="calculate('add')">Add</button>
@@ -18,6 +24,41 @@
   <h2>Result: <span id="result"></span></h2>
 
   <script>
+    Telegram.WebApp.ready();
+
+    const authStatus = document.getElementById('auth-status');
+    const userInfo = document.getElementById('user-info');
+    const telegramIdElem = document.getElementById('telegram-id');
+    const usernameElem = document.getElementById('username');
+    const gameDiv = document.getElementById('game');
+
+    // Get the authentication data from Telegram WebApp
+    const authData = Telegram.WebApp.initDataUnsafe;
+    const authQueryString = Telegram.WebApp.initData;
+
+    // Send authentication data to backend for verification
+    fetch('https://c9ac-104-28-195-207.ngrok-free.app/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ queryString: authQueryString, ...authData })
+    })
+    .then(response => response.json())
+    .then(result => {
+      if (result.success) {
+        authStatus.style.display = 'none';
+        userInfo.style.display = 'block';
+        telegramIdElem.innerText = authData.user.id;
+        usernameElem.innerText = authData.user.username;
+        gameDiv.style.display = 'block';
+      } else {
+        authStatus.innerText = 'Authentication failed!';
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      authStatus.innerText = 'Authentication failed!';
+    });
+
     function calculate(operation) {
       const num1 = parseFloat(document.getElementById('num1').value);
       const num2 = parseFloat(document.getElementById('num2').value);
