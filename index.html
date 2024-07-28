@@ -48,24 +48,33 @@
     console.log('Extracted Data:', { telegramUserId, username, authDate, hash });
 
     // Send authentication data to backend for verification
-    fetch('https://78d7-182-189-96-197.ngrok-free.app/auth/telegramAuth', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ telegramUserId, username, authDate, hash })
-    })
-    .then(response => response.json())
-    .then(result => {
-      if (result.success) {
-        authStatus.style.display = 'none';
-        gameDiv.style.display = 'block';
-      } else {
-        authStatus.innerText = 'Authentication failed!';
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      authStatus.innerText = 'Authentication failed!';
-    });
+    // Send authentication data to backend for verification
+fetch('https://your-ngrok-url.ngrok-free.app/auth/telegramAuth', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    user: {
+      id: authData.user.id,
+      first_name: authData.user.first_name,
+      last_name: authData.user.last_name,
+      username: authData.user.username,
+      photo_url: authData.user.photo_url,
+      auth_date: authData.auth_date,
+      hash: authData.hash
+    }
+  })
+})
+.then(response => response.json())
+.then(data => {
+  if (data.error) {
+    console.log('Authorization failed!');
+  } else {
+    console.log('Authorization succeeded!', data);
+  }
+})
+.catch(error => {
+  console.error('Error:', error);
+});
 
     function calculate(operation) {
       const num1 = parseFloat(document.getElementById('num1').value);
