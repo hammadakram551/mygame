@@ -45,6 +45,7 @@
     })
     .then(response => response.json())
     .then(result => {
+      console.log('Fetch result:', result);
       if (result.success) {
         authStatus.style.display = 'none';
         gameDiv.style.display = 'block';
