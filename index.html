@@ -9,10 +9,6 @@
 <body>
   <h1>Simple Calculator Game</h1>
   <div id="auth-status">Authenticating...</div>
-  <div id="user-info" style="display: none;">
-    <p>Telegram User ID: <span id="telegram-id"></span></p>
-    <p>Username: <span id="username"></span></p>
-  </div>
   <div id="game" style="display: none;">
     <input type="number" id="num1" placeholder="Enter first number">
     <input type="number" id="num2" placeholder="Enter second number">
@@ -27,28 +23,30 @@
     Telegram.WebApp.ready();
 
     const authStatus = document.getElementById('auth-status');
-    const userInfo = document.getElementById('user-info');
-    const telegramIdElem = document.getElementById('telegram-id');
-    const usernameElem = document.getElementById('username');
     const gameDiv = document.getElementById('game');
 
     // Get the authentication data from Telegram WebApp
     const authData = Telegram.WebApp.initDataUnsafe;
     const authQueryString = Telegram.WebApp.initData;
 
+    console.log('Auth Data:', authData);
+    console.log('Auth Query String:', authQueryString);
+
     // Send authentication data to backend for verification
     fetch('https://c9ac-104-28-195-207.ngrok-free.app/auth/telegramAuth', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ queryString: authQueryString, ...authData })
+      body: JSON.stringify({
+        telegramUserId: authData.user.id,
+        username: authData.user.username,
+        authDate: authData.auth_date,
+        hash: authData.hash
+      })
     })
     .then(response => response.json())
     .then(result => {
       if (result.success) {
         authStatus.style.display = 'none';
-        userInfo.style.display = 'block';
-        telegramIdElem.innerText = authData.user.id;
-        usernameElem.innerText = authData.user.username;
         gameDiv.style.display = 'block';
       } else {
         authStatus.innerText = 'Authentication failed!';
