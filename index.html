@@ -37,7 +37,7 @@
     const authQueryString = Telegram.WebApp.initData;
 
     // Send authentication data to backend for verification
-    fetch('https://c9ac-104-28-195-207.ngrok-free.app/auth', {
+    fetch('https://c9ac-104-28-195-207.ngrok-free.app/auth/telegramAuth', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ queryString: authQueryString, ...authData })
