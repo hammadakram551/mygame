@@ -9,6 +9,7 @@
 <body>
   <h1>Simple Calculator Game</h1>
   <div id="auth-status">Authenticating...</div>
+  <div id="auth-data"></div> <!-- Add this line to display auth data -->
   <div id="game" style="display: none;">
     <input type="number" id="num1" placeholder="Enter first number">
     <input type="number" id="num2" placeholder="Enter second number">
@@ -24,25 +25,33 @@
     console.log('Telegram WebApp is ready');
 
     const authStatus = document.getElementById('auth-status');
+    const authDataDiv = document.getElementById('auth-data'); // Add this line
     const gameDiv = document.getElementById('game');
 
     // Get the authentication data from Telegram WebApp
     const authData = Telegram.WebApp.initDataUnsafe;
     const authQueryString = Telegram.WebApp.initData;
 
+    // Display the entire authData object for debugging
+    authDataDiv.innerText = `Auth Data: ${JSON.stringify(authData, null, 2)}`; // Add this line
     console.log('Auth Data:', authData);
     console.log('Auth Query String:', authQueryString);
+
+    // Extract necessary data
+    const telegramUserId = authData.id;
+    const username = authData.username;
+    const authDate = authData.auth_date;
+    const hash = authData.hash;
+
+    // Display extracted data for debugging
+    authDataDiv.innerText += `\nExtracted Data: ${JSON.stringify({ telegramUserId, username, authDate, hash }, null, 2)}`; // Add this line
+    console.log('Extracted Data:', { telegramUserId, username, authDate, hash });
 
     // Send authentication data to backend for verification
     fetch('https://78d7-182-189-96-197.ngrok-free.app/auth/telegramAuth', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        telegramUserId: authData.id, 
-        username: authData.username, 
-        authDate: authData.auth_date, 
-        hash: authData.hash 
-      })
+      body: JSON.stringify({ telegramUserId, username, authDate, hash })
     })
     .then(response => response.json())
     .then(result => {
@@ -87,7 +96,6 @@
   </script>
 </body>
 </html>
-
 
 
 
