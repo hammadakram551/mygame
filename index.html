@@ -29,37 +29,17 @@
     const gameDiv = document.getElementById('game');
 
     // Get the authentication data from Telegram WebApp
-    const authQueryString = Telegram.WebApp.initData;
-    const authData = new URLSearchParams(authQueryString);
-    const authDataObject = Object.fromEntries(authData);
-
-    // Display the entire authData object for debugging
-    authDataDiv.innerText = `Auth Data: ${JSON.stringify(authDataObject, null, 2)}`;
-    console.log('Auth Data:', authDataObject);
-
-    // Extract necessary data
-    const { query_id, auth_date, hash, user } = authDataObject;
-
-    if (!auth_date || !hash || !user) {
-      authStatus.innerText = 'Invalid auth data received.';
-      console.error('Invalid auth data received:', authDataObject);
-      return;
-    }
-
-    // Display extracted data for debugging
-    authDataDiv.innerText += `\nExtracted Data: ${JSON.stringify({ query_id, auth_date, hash, user }, null, 2)}`;
-    console.log('Extracted Data:', { query_id, auth_date, hash, user });
+    const authData = Telegram.WebApp.initData;
+    
+    // Display the entire authData for debugging
+    authDataDiv.innerText = `Auth Data: ${authData}`;
+    console.log('Auth Data:', authData);
 
     // Send authentication data to backend for verification
-    fetch('https://78d7-182-189-96-197.ngrok-free.app/auth/telegramAuth', {
+    fetch('https://your-backend-url/auth/telegramAuth', { // Update this URL to your backend endpoint
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        query_id,
-        auth_date,
-        hash,
-        user: JSON.parse(user)
-      })
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ data: authData }),
     })
     .then(response => response.json())
     .then(data => {
