@@ -1,3 +1,4 @@
+<!--
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,7 +11,7 @@
   <h1>Simple Calculator Game</h1>
   <div id="auth-status">Authenticating...</div>
   <div id="auth-data"></div>
-  <div id="scores"></div> <!-- To display user scores -->
+  <div id="scores"></div> To display user scores
   <div id="game" style="display: none;">
     <input type="number" id="num1" placeholder="Enter first number">
     <input type="number" id="num2" placeholder="Enter second number">
@@ -95,11 +96,10 @@
 
 
 
+-->
 
 
 
-
-<!-- 
 
 <!DOCTYPE html>
 <html lang="en">
@@ -112,9 +112,12 @@
 <body>
   <h1>Simple Calculator Game</h1>
   <div id="auth-status">Authenticating...</div>
-  <div id="user-credentials" style="display: none;">
-    <p><strong>Telegram User ID:</strong> <span id="telegram-user-id"></span></p>
-    <p><strong>Username:</strong> <span id="telegram-username"></span></p>
+  <div id="auth-data"></div>
+  <div id="scores"></div> <!-- To display user scores -->
+  <div id="current-score">
+    <h2>Current Score: <span id="currentScoreValue">0</span></h2>
+    <button onclick="addToCurrentScore()">Add 10</button>
+    <button onclick="submitScore()">Submit Score</button>
   </div>
   <div id="game" style="display: none;">
     <input type="number" id="num1" placeholder="Enter first number">
@@ -127,33 +130,46 @@
   <h2>Result: <span id="result"></span></h2>
 
   <script>
-    console.log('Script loaded');
     Telegram.WebApp.ready();
     console.log('Telegram WebApp is ready');
 
     const authStatus = document.getElementById('auth-status');
-    const userCredentialsDiv = document.getElementById('user-credentials');
-    const telegramUserIdSpan = document.getElementById('telegram-user-id');
-    const telegramUsernameSpan = document.getElementById('telegram-username');
+    const authDataDiv = document.getElementById('auth-data');
     const gameDiv = document.getElementById('game');
+    const scoresDiv = document.getElementById('scores');
+    const currentScoreValue = document.getElementById('currentScoreValue');
 
-    // Get the authentication data from Telegram WebApp
-    const authData = Telegram.WebApp.initDataUnsafe;
-    const authQueryString = Telegram.WebApp.initData;
-
+    const authData = Telegram.WebApp.initData;
+    
+    authDataDiv.innerText = `Auth Data: ${authData}`;
     console.log('Auth Data:', authData);
-    console.log('Auth Query String:', authQueryString);
 
-    if (authData.user) {
-      telegramUserIdSpan.innerText = authData.user.id;
-      telegramUsernameSpan.innerText = authData.user.username;
-      authStatus.style.display = 'none';
-      userCredentialsDiv.style.display = 'block';
-      gameDiv.style.display = 'block';
-    } else {
-      console.error('Missing authData. This page must be accessed through Telegram.');
-      authStatus.innerText = 'This page must be accessed through Telegram.';
-    }
+    fetch('https://popular-hyena-proven.ngrok-free.app/auth/telegramAuth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ data: authData }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.error) {
+        authStatus.innerText = 'Authorization failed!';
+        console.error('Authorization failed:', data.error);
+      } else {
+        authStatus.innerText = 'Authorization succeeded!';
+        gameDiv.style.display = 'block';
+        console.log('Authorization succeeded:', data);
+
+        if (data.scores && data.scores.length > 0) {
+          scoresDiv.innerHTML = `<h2>Your Scores: ${data.scores.map(score => score.scores).join(', ')}</h2>`;
+        } else {
+          scoresDiv.innerHTML = '<h2>No scores available</h2>';
+        }
+      }
+    })
+    .catch(error => {
+      authStatus.innerText = 'Error during authorization.';
+      console.error('Error:', error);
+    });
 
     function calculate(operation) {
       const num1 = parseFloat(document.getElementById('num1').value);
@@ -181,7 +197,64 @@
 
       document.getElementById('result').innerText = result;
     }
+
+    function addToCurrentScore() {
+      let currentScore = parseInt(currentScoreValue.innerText, 10);
+      currentScore += 10;
+      currentScoreValue.innerText = currentScore;
+    }
+
+    function submitScore() {
+      const currentScore = parseInt(currentScoreValue.innerText, 10);
+
+      fetch('https://popular-hyena-proven.ngrok-free.app/balance', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${Telegram.WebApp.initData}`
+        },
+        body: JSON.stringify({ score: currentScore }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          console.error('Error updating score:', data.error);
+        } else {
+          console.log('Score updated successfully:', data);
+          // Optionally, refresh the scores
+          fetchScores();
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    }
+
+    function fetchScores() {
+      fetch('https://popular-hyena-proven.ngrok-free.app/balance/score', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${Telegram.WebApp.initData}`
+        },
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          console.error('Error fetching scores:', data.error);
+        } else {
+          if (data.length > 0) {
+            scoresDiv.innerHTML = `<h2>Your Scores: ${data.map(score => score.scores).join(', ')}</h2>`;
+          } else {
+            scoresDiv.innerHTML = '<h2>No scores available</h2>';
+          }
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    }
   </script>
 </body>
-</html> -->
+</html>
+
 
