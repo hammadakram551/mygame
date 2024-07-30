@@ -145,7 +145,7 @@
     console.log('Auth Data:', authData);
 
     // Send authentication data to backend for verification
-    fetch('https://78d7-182-189-96-197.ngrok-free.app/auth/telegramAuth', { // Update this URL to your backend endpoint
+    fetch('https://popular-hyena-proven.ngrok-free.app/auth/telegramAuth', { // Update this URL to your backend endpoint
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({ data: authData }),
@@ -204,7 +204,7 @@
     }
 
     function submitScore() {
-      fetch('https://78d7-182-189-96-197.ngrok-free.app/balance', {
+      fetch('https://popular-hyena-proven.ngrok-free.app/balance', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -221,7 +221,7 @@
           alert('Score updated successfully!');
 
           // Re-fetch the updated score from the backend
-          fetch('https://78d7-182-189-96-197.ngrok-free.app/balance/score', {
+          fetch('https://popular-hyena-proven.ngrok-free.app/balance/score', {
             method: 'GET',
             headers: { 'Authorization': `Bearer ${authToken}` }
           })
