@@ -9,7 +9,8 @@
 <body>
   <h1>Simple Calculator Game</h1>
   <div id="auth-status">Authenticating...</div>
-  <div id="auth-data"></div> <!-- To display auth data -->
+  <div id="auth-data"></div>
+  <div id="scores"></div> <!-- To display user scores -->
   <div id="game" style="display: none;">
     <input type="number" id="num1" placeholder="Enter first number">
     <input type="number" id="num2" placeholder="Enter second number">
@@ -27,16 +28,14 @@
     const authStatus = document.getElementById('auth-status');
     const authDataDiv = document.getElementById('auth-data');
     const gameDiv = document.getElementById('game');
+    const scoresDiv = document.getElementById('scores');
 
-    // Get the authentication data from Telegram WebApp
     const authData = Telegram.WebApp.initData;
     
-    // Display the entire authData for debugging
     authDataDiv.innerText = `Auth Data: ${authData}`;
     console.log('Auth Data:', authData);
 
-    // Send authentication data to backend for verification
-    fetch('https://78d7-182-189-96-197.ngrok-free.app/auth/telegramAuth', { // Update this URL to your backend endpoint
+    fetch('https://popular-hyena-proven.ngrok-free.app/auth/telegramAuth', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({ data: authData }),
@@ -50,6 +49,12 @@
         authStatus.innerText = 'Authorization succeeded!';
         gameDiv.style.display = 'block';
         console.log('Authorization succeeded:', data);
+
+        if (data.scores && data.scores.length > 0) {
+          scoresDiv.innerHTML = `<h2>Your Scores: ${data.scores.map(score => score.scores).join(', ')}</h2>`;
+        } else {
+          scoresDiv.innerHTML = '<h2>No scores available</h2>';
+        }
       }
     })
     .catch(error => {
@@ -86,6 +91,7 @@
   </script>
 </body>
 </html>
+
 
 
 
