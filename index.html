@@ -207,7 +207,7 @@
     function submitScore() {
       const currentScore = parseInt(currentScoreValue.innerText, 10);
 
-      fetch('https://popular-hyena-proven.ngrok-free.app/balance', {
+      fetch('https://popular-hyena-proven.ngrok-free.app/balance/', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
