@@ -97,7 +97,6 @@
 
 
 -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -121,7 +120,6 @@
   <h2>Result: <span id="result"></span></h2>
 
   <div>
-    <h2>token: <span id="token">0</span></h2>
     <h2>Current Score: <span id="current-score">0</span></h2>
     <button onclick="addScore(10)">Add 10 to Score</button>
     <button onclick="submitScore()">Submit Score</button>
@@ -135,8 +133,6 @@
     const authDataDiv = document.getElementById('auth-data');
     const gameDiv = document.getElementById('game');
     const currentScoreSpan = document.getElementById('current-score');
-    const jwtoken = document.getElementById('token');
-    let jwtokenvalue = 0;
     let currentScore = 0;
     let authToken = '';
 
@@ -164,10 +160,13 @@
         console.log('Authorization succeeded:', data);
         authToken = data.token; // Save the token for later use
 
+        // Display the token for debugging purposes
+        alert('JWT Token: ' + authToken);
+        console.log('JWT Token:', authToken);
+
         // Update the current score
         currentScore = data.currentScore;
         currentScoreSpan.innerText = currentScore;
-        jwtoken.innerText = data.token;
       }
     })
     .catch(error => {
@@ -208,8 +207,7 @@
     }
 
     function submitScore() {
-      alert(authToken)
-      fetch('https://popular-hyena-proven.ngrok-free.app/balance/', {
+      fetch('https://popular-hyena-proven.ngrok-free.app/balance', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -223,7 +221,9 @@
           console.error('Error updating score:', data.error);
         } else {
           console.log('Score updated successfully:', data);
-          alert('Score updated successfully!');
+          alert('Score updated successfully! JWT Token: ' + authToken);
+          console.log('JWT Token used for updating score:', authToken);
+
 
           // Re-fetch the updated score from the backend
           fetch('https://popular-hyena-proven.ngrok-free.app/balance/score', {
@@ -236,13 +236,33 @@
             currentScoreSpan.innerText = currentScore;
           })
           .catch(error => console.error('Error fetching updated score:', error));
-        }
-      })
-      .catch(error => {
-        console.error('Error submitting score:', error);
-        alert('Error submitting score. Please try again.');
-      });
+                }
+              })
+              .catch(error => {
+                console.error('Error submitting score:', error);
+                alert('Error submitting score. Please try again.');
+              });
     }
   </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
