@@ -99,7 +99,6 @@
 -->
 
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -137,6 +136,7 @@
     const gameDiv = document.getElementById('game');
     const currentScoreSpan = document.getElementById('current-score');
     let currentScore = 0;
+    let authToken = '';
 
     // Get the authentication data from Telegram WebApp
     const authData = Telegram.WebApp.initData;
@@ -160,11 +160,12 @@
         authStatus.innerText = 'Authorization succeeded!';
         gameDiv.style.display = 'block';
         console.log('Authorization succeeded:', data);
+        authToken = data.token; // Save the token for later use
 
         // Retrieve current score from the backend
         fetch('https://popular-hyena-proven.ngrok-free.app/balance/score', {
           method: 'GET',
-          headers: { 'Authorization': `Bearer ${data.token}` }
+          headers: { 'Authorization': `Bearer ${authToken}` }
         })
         .then(response => response.json())
         .then(scoreData => {
@@ -212,11 +213,11 @@
     }
 
     function submitScore() {
-      fetch('https://popular-hyena-proven.ngrok-free.app/balance/', {
+      fetch('https://popular-hyena-proven.ngrok-free.app/balance', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authData}`,
+          'Authorization': `Bearer ${authToken}`,
         },
         body: JSON.stringify({ score: currentScore }),
       })
@@ -227,6 +228,18 @@
         } else {
           console.log('Score updated successfully:', data);
           alert('Score updated successfully!');
+
+          // Re-fetch the updated score from the backend
+          fetch('https://popular-hyena-proven.ngrok-free.app/balance/score', {
+            method: 'GET',
+            headers: { 'Authorization': `Bearer ${authToken}` }
+          })
+          .then(response => response.json())
+          .then(scoreData => {
+            currentScore = scoreData[0]?.scores || 0;
+            currentScoreSpan.innerText = currentScore;
+          })
+          .catch(error => console.error('Error fetching updated score:', error));
         }
       })
       .catch(error => {
@@ -237,3 +250,4 @@
   </script>
 </body>
 </html>
+
