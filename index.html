@@ -212,7 +212,7 @@
 
     function submitScore() {
       fetch('https://popular-hyena-proven.ngrok-free.app/balance/submit', {
-        method: 'PUT',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${authToken}`,
