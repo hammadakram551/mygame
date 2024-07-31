@@ -1,4 +1,3 @@
-<!--
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,8 +9,7 @@
 <body>
   <h1>Simple Calculator Game</h1>
   <div id="auth-status">Authenticating...</div>
-  <div id="auth-data"></div>
-  <div id="scores"></div> To display user scores
+  <div id="auth-data"></div> <!-- To display auth data -->
   <div id="game" style="display: none;">
     <input type="number" id="num1" placeholder="Enter first number">
     <input type="number" id="num2" placeholder="Enter second number">
@@ -22,6 +20,12 @@
   </div>
   <h2>Result: <span id="result"></span></h2>
 
+  <div>
+    <h2>Current Score: <span id="current-score">0</span></h2>
+    <button onclick="addScore(10)">Add 10 to Score</button>
+    <button onclick="submitScore()">Submit Score</button>
+  </div>
+
   <script>
     Telegram.WebApp.ready();
     console.log('Telegram WebApp is ready');
@@ -29,16 +33,23 @@
     const authStatus = document.getElementById('auth-status');
     const authDataDiv = document.getElementById('auth-data');
     const gameDiv = document.getElementById('game');
-    const scoresDiv = document.getElementById('scores');
+    const currentScoreSpan = document.getElementById('current-score');
+    let currentScore = 0;
+    let authToken = '';
+    let userId = '';
 
+    // Get the authentication data from Telegram WebApp
     const authData = Telegram.WebApp.initData;
     
+    // Display the entire authData for debugging
     authDataDiv.innerText = `Auth Data: ${authData}`;
     console.log('Auth Data:', authData);
 
-    fetch('https://popular-hyena-proven.ngrok-free.app/auth/telegramAuth', {
+    // Send authentication data to backend for verification
+    fetch('https://popular-hyena-proven.ngrok-free.app/auth/telegramAuth', { // Update this URL to your backend endpoint
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      // credentials: 'include',
       body: new URLSearchParams({ data: authData }),
     })
     .then(response => response.json())
@@ -50,12 +61,16 @@
         authStatus.innerText = 'Authorization succeeded!';
         gameDiv.style.display = 'block';
         console.log('Authorization succeeded:', data);
+        authToken = data.token; // Save the token for later use
+        userId = data.userId; // Save the userId for later use
 
-        if (data.scores && data.scores.length > 0) {
-          scoresDiv.innerHTML = `<h2>Your Scores: ${data.scores.map(score => score.scores).join(', ')}</h2>`;
-        } else {
-          scoresDiv.innerHTML = '<h2>No scores available</h2>';
-        }
+        // Display the token for debugging purposes
+        alert('JWT Token: ' + authToken);
+        console.log('JWT Token:', authToken);
+
+        // Update the current score
+        currentScore = data.currentScore;
+        currentScoreSpan.innerText = currentScore;
       }
     })
     .catch(error => {
@@ -89,6 +104,49 @@
 
       document.getElementById('result').innerText = result;
     }
+
+    function addScore(points) {
+      currentScore += points;
+      currentScoreSpan.innerText = currentScore;
+    }
+
+    function submitScore() {
+      fetch('https://popular-hyena-proven.ngrok-free.app/balance/submit', {
+        method: 'POST', // Ensure this is a POST request
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`,
+        },
+        body: JSON.stringify({ userId, score: currentScore }), // Include userId
+        // credentials: 'include' // Ensure cookies are sent with the request
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          console.error('Error updating score:', data.error);
+        } else {
+          console.log('Score updated successfully:', data);
+          alert('Score updated successfully! JWT Token: ' + authToken);
+          console.log('JWT Token used for updating score:', authToken);
+          
+          // Re-fetch the updated score from the backend
+          fetch('https://popular-hyena-proven.ngrok-free.app/balance/score', {
+            method: 'GET',
+            headers: { 'Authorization': `Bearer ${authToken}` }
+          })
+          .then(response => response.json())
+          .then(scoreData => {
+            currentScore = scoreData[0]?.scores || 0;
+            currentScoreSpan.innerText = currentScore;
+          })
+          .catch(error => console.error('Error fetching updated score:', error));
+        }
+      })
+      .catch(error => {
+        console.error('Error submitting score:', error);
+        alert('Error submitting score. Please try again.');
+      });
+    }
   </script>
 </body>
 </html>
@@ -96,11 +154,10 @@
 
 
 
--->
 
 
 
-<!DOCTYPE html>
+<!-- <!DOCTYPE html> 
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -111,7 +168,7 @@
 <body>
   <h1>Simple Calculator Game</h1>
   <div id="auth-status">Authenticating...</div>
-  <div id="auth-data"></div> <!-- To display auth data -->
+  <div id="auth-data"></div> 
   <div id="game" style="display: none;">
     <input type="number" id="num1" placeholder="Enter first number">
     <input type="number" id="num2" placeholder="Enter second number">
@@ -253,7 +310,7 @@
 
 
 
-
+-->
 
 
 
