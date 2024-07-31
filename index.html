@@ -217,7 +217,7 @@
           'Authorization': `Bearer ${authToken}`,
         },
         body: JSON.stringify({ score: currentScore }),
-        credentials: 'include' // Ensure cookies are sent with the request
+        // credentials: 'include' // Ensure cookies are sent with the request
       })
       .then(response => response.json())
       .then(data => {
