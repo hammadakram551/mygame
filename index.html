@@ -97,6 +97,9 @@
 
 
 -->
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -214,6 +217,7 @@
           'Authorization': `Bearer ${authToken}`,
         },
         body: JSON.stringify({ score: currentScore }),
+        credentials: 'include' // Ensure cookies are sent with the request
       })
       .then(response => response.json())
       .then(data => {
@@ -223,25 +227,24 @@
           console.log('Score updated successfully:', data);
           alert('Score updated successfully! JWT Token: ' + authToken);
           console.log('JWT Token used for updating score:', authToken);
-
-
-          // Re-fetch the updated score from the backend
-          fetch('https://popular-hyena-proven.ngrok-free.app/balance/score', {
-            method: 'GET',
-            headers: { 'Authorization': `Bearer ${authToken}` }
-          })
-          .then(response => response.json())
-          .then(scoreData => {
-            currentScore = scoreData[0]?.scores || 0;
-            currentScoreSpan.innerText = currentScore;
-          })
-          .catch(error => console.error('Error fetching updated score:', error));
-                }
-              })
-              .catch(error => {
-                console.error('Error submitting score:', error);
-                alert('Error submitting score. Please try again.');
-              });
+          
+  // Re-fetch the updated score from the backend
+  fetch('https://popular-hyena-proven.ngrok-free.app/balance/score', {
+    method: 'GET',
+    headers: { 'Authorization': `Bearer ${authToken}` }
+  })
+  .then(response => response.json())
+  .then(scoreData => {
+    currentScore = scoreData[0]?.scores || 0;
+    currentScoreSpan.innerText = currentScore;
+  })
+  .catch(error => console.error('Error fetching updated score:', error));
+        }
+      })
+      .catch(error => {
+        console.error('Error submitting score:', error);
+        alert('Error submitting score. Please try again.');
+      });
     }
   </script>
 </body>
@@ -265,4 +268,22 @@
 
 
 
+<!-- 
+else {
+  console.log('Score updated successfully:', data);
+  alert('Score updated successfully! JWT Token: ' + authToken);
+  console.log('JWT Token used for updating score:', authToken);
 
+
+  // Re-fetch the updated score from the backend
+  fetch('https://popular-hyena-proven.ngrok-free.app/balance/score', {
+    method: 'GET',
+    headers: { 'Authorization': `Bearer ${authToken}` }
+  })
+  .then(response => response.json())
+  .then(scoreData => {
+    currentScore = scoreData[0]?.scores || 0;
+    currentScoreSpan.innerText = currentScore;
+  })
+  .catch(error => console.error('Error fetching updated score:', error));
+        } -->
